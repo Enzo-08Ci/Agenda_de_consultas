@@ -31,44 +31,58 @@ def _seed_initial_data():
         )
 
 
-def index(request):
+def _get_context():
     _seed_initial_data()
 
-    pacientes = Paciente.objects.all()
-    profissionais = Profissional.objects.all()
-    consultas = Consulta.objects.select_related('paciente', 'profissional').all()
-    mensagem = None
+    return {
+        'pacientes': Paciente.objects.all(),
+        'profissionais': Profissional.objects.all(),
+        'consultas': Consulta.objects.select_related('paciente', 'profissional').all(),
+    }
+
+
+def home(request):
+    contexto = _get_context()
+    return render(request, 'home.html', contexto)
+
+
+def agendar_consulta(request):
+    contexto = _get_context()
+    contexto['mensagem'] = None
 
     if request.method == 'POST':
         paciente_id = request.POST.get('paciente')
+        paciente_nome = request.POST.get('paciente_nome', '').strip()
         profissional_id = request.POST.get('profissional')
         data = request.POST.get('data')
         horario = request.POST.get('horario')
         duracao = request.POST.get('duracao')
         observacoes = request.POST.get('observacoes', '').strip()
 
-        if not all([paciente_id, profissional_id, data, horario]):
-            mensagem = 'Preencha todos os campos obrigatórios.'
+        if not all([profissional_id, data, horario]):
+            contexto['mensagem'] = 'Preencha todos os campos obrigatórios.'
         else:
             try:
-                paciente = Paciente.objects.get(id=paciente_id)
-                profissional = Profissional.objects.get(id=profissional_id)
-                Consulta.objects.create(
-                    paciente=paciente,
-                    profissional=profissional,
-                    data=data,
-                    horario=horario,
-                    duracao=int(duracao or 60),
-                    observacoes=observacoes,
-                )
-                return redirect('index')
-            except (Paciente.DoesNotExist, Profissional.DoesNotExist, ValueError):
-                mensagem = 'Não foi possível criar a consulta. Verifique os dados informados.'
+                paciente = None
+                if paciente_id:
+                    paciente = Paciente.objects.get(id=paciente_id)
+                elif paciente_nome:
+                    paciente, _ = Paciente.objects.get_or_create(nome=paciente_nome)
+                else:
+                    contexto['mensagem'] = 'Informe seu nome para agendar a consulta.'
 
-    contexto = {
-        'pacientes': pacientes,
-        'profissionais': profissionais,
-        'consultas': consultas,
-        'mensagem': mensagem,
-    }
+                if paciente:
+                    profissional = Profissional.objects.get(id=profissional_id)
+                    Consulta.objects.create(
+                        paciente=paciente,
+                        profissional=profissional,
+                        data=data,
+                        horario=horario,
+                        duracao=int(duracao or 60),
+                        observacoes=observacoes,
+                    )
+                    return redirect('agendar_consulta')
+            except (Paciente.DoesNotExist, Profissional.DoesNotExist, ValueError):
+                contexto['mensagem'] = 'Não foi possível criar a consulta. Verifique os dados informados.'
+
     return render(request, 'index.html', contexto)
