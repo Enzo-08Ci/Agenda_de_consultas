@@ -149,6 +149,7 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center gap-2">
+                                        <a href="{% url 'detalhes_consulta' consulta.id %}" class="btn btn-sm btn-outline-secondary">Detalhes</a>
                                         <a href="{% url 'editar_consulta' consulta.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
                                         <form method="post" action="{% url 'excluir_consulta' consulta.id %}" class="d-inline">
                                             {% csrf_token %}

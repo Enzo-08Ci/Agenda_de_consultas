@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Detalhes da Consulta</title>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">Agenda</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agendar_consulta' %}">Agendar consultas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agendar_consulta' %}#consultas-agendadas">Consultas agendadas</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <header class="page-header text-white p-4 p-lg-5 mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <p class="mb-2 text-white-50 fw-semibold text-uppercase small">Sistema de gestão</p>
+                    <h1 class="mb-0 fw-bold">Detalhes da consulta</h1>
+                </div>
+                <a href="{% url 'agendar_consulta' %}" class="btn btn-light btn-lg fw-semibold px-4">Voltar</a>
+            </div>
+        </header>
+
+        <div class="card form-card mb-4">
+            <div class="card-body p-4 p-lg-5">
+                <h5 class="card-title mb-4 fw-bold">Informações da consulta</h5>
+
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <h6 class="text-uppercase small text-muted mb-3">Paciente</h6>
+                            <p class="mb-2"><strong>Nome:</strong> {{ consulta.paciente.nome }}</p>
+                            <p class="mb-2"><strong>CPF:</strong> {{ consulta.paciente.cpf|default:'Não informado' }}</p>
+                            <p class="mb-2"><strong>Telefone:</strong> {{ consulta.paciente.telefone|default:'Não informado' }}</p>
+                            <p class="mb-2"><strong>Email:</strong> {{ consulta.paciente.email|default:'Não informado' }}</p>
+                            <p class="mb-2"><strong>Data de nascimento:</strong> {{ consulta.paciente.data_nascimento|default:'Não informado' }}</p>
+                            <p class="mb-2"><strong>Endereço:</strong> {{ consulta.paciente.endereco|default:'Não informado' }}</p>
+                            <p class="mb-0"><strong>Cidade/Estado:</strong> {{ consulta.paciente.cidade|default:'Não informado' }}{% if consulta.paciente.estado %} / {{ consulta.paciente.estado }}{% endif %}</p>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 h-100">
+                            <h6 class="text-uppercase small text-muted mb-3">Consulta</h6>
+                            <p class="mb-2"><strong>Profissional:</strong> {{ consulta.profissional.nome }} ({{ consulta.profissional.especialidade }})</p>
+                            <p class="mb-2"><strong>Data:</strong> {{ consulta.data }}</p>
+                            <p class="mb-2"><strong>Horário:</strong> {{ consulta.horario }}</p>
+                            <p class="mb-2"><strong>Duração:</strong> {{ consulta.duracao }} minutos</p>
+                            <p class="mb-2"><strong>Status:</strong> {{ consulta.status }}</p>
+                            <p class="mb-0"><strong>Observações:</strong> {{ consulta.observacoes|default:'Nenhuma observação registrada.' }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <a href="{% url 'editar_consulta' consulta.id %}" class="btn btn-primary">Editar consulta</a>
+                    <a href="{% url 'agendar_consulta' %}" class="btn btn-outline-secondary">Voltar para consultas</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -200,6 +200,14 @@ def editar_consulta(request, consulta_id):
     return render(request, 'editar_consulta.html', contexto)
 
 
+def detalhes_consulta(request, consulta_id):
+    consulta = get_object_or_404(
+        Consulta.objects.select_related('paciente', 'profissional'),
+        id=consulta_id
+    )
+    return render(request, 'detalhes_consulta.html', {'consulta': consulta})
+
+
 def excluir_consulta(request, consulta_id):
     consulta = get_object_or_404(Consulta, id=consulta_id)
 

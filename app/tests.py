@@ -146,3 +146,39 @@ class AgendaConsultasTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Paciente.objects.filter(nome='Joana Souza', cpf='98765432100').exists())
         self.assertTrue(Consulta.objects.filter(paciente__cpf='98765432100').exists())
+
+    def test_pode_ver_detalhes_da_consulta(self):
+        paciente = Paciente.objects.create(
+            nome='Paciente Detalhes',
+            cpf='11122233344',
+            telefone='(11) 90000-0000',
+            email='detalhes@email.com',
+            data_nascimento='1990-01-01',
+            endereco='Rua A, 10',
+            cidade='São Paulo',
+            estado='SP',
+            observacoes='Observações do paciente'
+        )
+        profissional = Profissional.objects.create(
+            nome='Dr. Detalhes',
+            especialidade='Neurologia',
+            telefone='(11) 91111-1111'
+        )
+        consulta = Consulta.objects.create(
+            paciente=paciente,
+            profissional=profissional,
+            data='2026-09-25',
+            horario='15:30',
+            duracao=90,
+            status='confirmada',
+            observacoes='Observações da consulta'
+        )
+
+        response = self.client.get(
+            reverse('detalhes_consulta', args=[consulta.id])
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Paciente Detalhes')
+        self.assertContains(response, 'Observações da consulta')
+        self.assertContains(response, 'Dr. Detalhes')
