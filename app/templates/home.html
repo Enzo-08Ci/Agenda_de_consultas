@@ -9,6 +9,28 @@
     <title>Home | Agenda de Consultas</title>
 </head>
 <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">Agenda</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Início</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agendar_consulta' %}">Agendar consultas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agendar_consulta' %}#consultas-agendadas">Consultas agendadas</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container py-5">
         <header class="page-header text-white p-4 p-lg-5 mb-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
@@ -20,22 +42,33 @@
             </div>
         </header>
 
-        <section class="card form-card mb-4">
-            <div class="card-body p-4 p-lg-5">
-                <div class="row align-items-center g-3">
-                    <div class="col-lg-8">
-                        <p class="text-primary fw-semibold text-uppercase small mb-2">Painel rápido</p>
-                        <h2 class="mb-2 fw-bold">Organize sua agenda com praticidade</h2>
-                        <p class="mb-0 text-secondary">
-                            Cadastre consultas, acompanhe pacientes e mantenha sua rotina organizada em um único lugar.
+        <section class="row g-3 mb-4">
+            <div class="col-lg-6">
+                <div class="card form-card h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <p class="text-primary fw-semibold text-uppercase small mb-2">Agendar consultas</p>
+                        <h2 class="mb-3 fw-bold">Crie um novo agendamento</h2>
+                        <p class="mb-4 text-secondary">
+                            Cadastre uma consulta para o paciente e organize a agenda com facilidade.
                         </p>
-                    </div>
-                    <div class="col-lg-4 text-lg-end">
                         <a href="{% url 'agendar_consulta' %}" class="btn btn-primary btn-lg px-4">Nova consulta</a>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-6">
+                <div class="card stat-card h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <p class="text-success fw-semibold text-uppercase small mb-2">Consultas agendadas</p>
+                        <h2 class="mb-3 fw-bold">Acompanhe o que já foi marcado</h2>
+                        <p class="mb-4 text-secondary">
+                            Veja rapidamente a quantidade de consultas já agendadas e acesse a lista completa.
+                        </p>
+                        <a href="{% url 'agendar_consulta' %}#consultas-agendadas" class="btn btn-outline-success btn-lg px-4">Ver consultas</a>
+                    </div>
+                </div>
+            </div>
         </section>
+
 
         <section class="row g-3 mb-4">
             <div class="col-md-4">
@@ -64,7 +97,7 @@
             </div>
         </section>
 
-        <section class="card table-card">
+        <section class="card table-card" id="consultas-agendadas">
             <div class="card-body p-4 p-lg-5">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
                     <h5 class="card-title mb-0 fw-bold">Próximas consultas</h5>
@@ -81,6 +114,7 @@
                                 <th>Data</th>
                                 <th>Horário</th>
                                 <th>Status</th>
+                                <th class="text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,6 +126,15 @@
                                 <td>{{ consulta.horario }}</td>
                                 <td>
                                     <span class="status-badge bg-primary-subtle text-primary">{{ consulta.status }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{% url 'editar_consulta' consulta.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                        <form method="post" action="{% url 'excluir_consulta' consulta.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}

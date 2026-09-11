@@ -3,8 +3,13 @@ from django.db import models
 
 class Paciente(models.Model):
     nome = models.CharField(max_length=150)
+    cpf = models.CharField(max_length=11, unique=True, blank=True, null=True)
     telefone = models.CharField(max_length=20, blank=True)
     email = models.EmailField(blank=True)
+    data_nascimento = models.DateField(blank=True, null=True)
+    endereco = models.CharField(max_length=255, blank=True)
+    cidade = models.CharField(max_length=100, blank=True)
+    estado = models.CharField(max_length=2, blank=True)
     observacoes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

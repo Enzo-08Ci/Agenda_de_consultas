@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>Editar Consulta</title>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">Agenda</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agendar_consulta' %}">Agendar consultas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agendar_consulta' %}#consultas-agendadas">Consultas agendadas</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-5">
+        <header class="page-header text-white p-4 p-lg-5 mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                <div>
+                    <p class="mb-2 text-white-50 fw-semibold text-uppercase small">Sistema de gestão</p>
+                    <h1 class="mb-0 fw-bold">Editar consulta</h1>
+                </div>
+                <a href="{% url 'agendar_consulta' %}" class="btn btn-light btn-lg fw-semibold px-4">Voltar</a>
+            </div>
+        </header>
+
+        <div class="card form-card mb-4">
+            <div class="card-body p-4 p-lg-5">
+                <h5 class="card-title mb-3 fw-bold">Atualizar agendamento</h5>
+
+                {% if mensagem %}
+                    <div class="alert alert-warning rounded-3 mb-4">{{ mensagem }}</div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Paciente</label>
+                            <select class="form-select" name="paciente" required>
+                                <option value="">Selecione</option>
+                                {% for paciente in pacientes %}
+                                    <option value="{{ paciente.id }}" {% if consulta.paciente.id == paciente.id %}selected{% endif %}>
+                                        {{ paciente.nome }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Seu nome</label>
+                            <input type="text" class="form-control" name="paciente_nome" value="{{ consulta.paciente.nome }}" placeholder="Digite seu nome completo" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Profissional</label>
+                            <select class="form-select" name="profissional" required>
+                                <option value="">Selecione</option>
+                                {% for profissional in profissionais %}
+                                    <option value="{{ profissional.id }}" {% if consulta.profissional.id == profissional.id %}selected{% endif %}>
+                                        {{ profissional.nome }} - {{ profissional.especialidade }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Data</label>
+                            <input type="date" class="form-control" name="data" value="{{ consulta.data|date:'Y-m-d' }}" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Horário</label>
+                            <input type="time" class="form-control" name="horario" value="{{ consulta.horario|time:'H:i' }}" required>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Duração</label>
+                            <input type="number" class="form-control" name="duracao" min="30" step="15" value="{{ consulta.duracao }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select class="form-select" name="status">
+                                {% for choice in consulta.STATUS_CHOICES %}
+                                    <option value="{{ choice.0 }}" {% if consulta.status == choice.0 %}selected{% endif %}>
+                                        {{ choice.1 }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label class="form-label fw-semibold">Observações</label>
+                        <textarea class="form-control" name="observacoes" rows="3" placeholder="Informe detalhes relevantes da consulta...">{{ consulta.observacoes }}</textarea>
+                    </div>
+
+                    <div class="mt-4 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary px-4">Salvar alterações</button>
+                        <a href="{% url 'agendar_consulta' %}" class="btn btn-outline-secondary px-4">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -9,6 +9,28 @@
     <title>Agendar Consulta</title>
 </head>
 <body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">Agenda</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agendar_consulta' %}">Agendar consultas</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'agendar_consulta' %}#consultas-agendadas">Consultas agendadas</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
     <div class="container py-5">
         <header class="page-header text-white p-4 p-lg-5 mb-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
@@ -34,6 +56,34 @@
                         <div class="col-md-4">
                             <label class="form-label fw-semibold">Seu nome</label>
                             <input type="text" class="form-control" name="paciente_nome" placeholder="Digite seu nome completo" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">CPF</label>
+                            <input type="text" class="form-control" name="cpf" placeholder="00000000000" maxlength="11">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Telefone</label>
+                            <input type="tel" class="form-control" name="telefone" placeholder="(11) 99999-9999">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Data de nascimento</label>
+                            <input type="date" class="form-control" name="data_nascimento">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Email</label>
+                            <input type="email" class="form-control" name="email" placeholder="seu@email.com">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Endereço</label>
+                            <input type="text" class="form-control" name="endereco" placeholder="Rua, número, complemento">
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label fw-semibold">Cidade</label>
+                            <input type="text" class="form-control" name="cidade" placeholder="Cidade">
+                        </div>
+                        <div class="col-md-1">
+                            <label class="form-label fw-semibold">Estado</label>
+                            <input type="text" class="form-control" name="estado" maxlength="2" placeholder="SP">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold">Profissional</label>
@@ -70,7 +120,7 @@
             </div>
         </div>
 
-        <div class="card table-card">
+        <div class="card table-card" id="consultas-agendadas">
             <div class="card-body p-4 p-lg-5">
                 <h5 class="card-title mb-4 fw-bold">Consultas agendadas</h5>
 
@@ -84,6 +134,7 @@
                                 <th>Data</th>
                                 <th>Horário</th>
                                 <th>Status</th>
+                                <th class="text-center">Ações</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -95,6 +146,15 @@
                                 <td>{{ consulta.horario }}</td>
                                 <td>
                                     <span class="status-badge bg-primary-subtle text-primary">{{ consulta.status }}</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="{% url 'editar_consulta' consulta.id %}" class="btn btn-sm btn-outline-primary">Editar</a>
+                                        <form method="post" action="{% url 'excluir_consulta' consulta.id %}" class="d-inline">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             {% endfor %}
